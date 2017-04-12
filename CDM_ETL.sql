@@ -501,16 +501,18 @@ SELECT  --PCORI_CDM.LAB_RESULT_CM_SEQ.NEXTVAL AS LAB_RESULT_CM_ID,
         NULL               AS LAB_PX,
         'LC'               AS LAB_PX_TYPE,
         COP.ORDERING_DATE  AS LAB_ORDER_DATE,
-        TRUNC(COR.RESULT_DATE) AS SPECIMEN_DATE,
-        TO_CHAR(COR.RESULT_DATE, 'HH24:MM' ) AS SPECIMEN_TIME,
         CASE 
+            -- COR.COMP_OBS_INST_TM Timestamp to track per non-micro result component when it was collected/observed.
             WHEN COR.COMP_OBS_INST_TM IS NOT NULL THEN TRUNC(COR.COMP_OBS_INST_TM)
             ELSE TRUNC(COR.RESULT_DATE)    
-        END RESULT_DATE,
-        CASE
-           WHEN COR.COMP_OBS_INST_TM IS NOT NULL THEN TO_CHAR(COR.COMP_OBS_INST_TM, 'HH24:MM')
-           ELSE TO_CHAR(COR.RESULT_DATE, 'HH24:MM')  
-        END AS RESULT_TIME,
+        END SPECIMEN_DATE,
+        CASE 
+            -- COR.COMP_OBS_INST_TM Timestamp to track per non-micro result component when it was collected/observed.
+            WHEN COR.COMP_OBS_INST_TM IS NOT NULL THEN TO_CHAR(COR.COMP_OBS_INST_TM, 'HH24:MM' )
+            ELSE TO_CHAR(COR.RESULT_DATE, 'HH24:MM' ) 
+        END SPECIMEN_TIME,
+        TRUNC(COR.RESULT_DATE)  AS RESULT_DATE,
+        TO_CHAR(COR.RESULT_DATE, 'HH24:MM') AS RESULT_TIME,
         CASE 
             WHEN COR.ORD_NUM_VALUE = 9999999 THEN 
                  CASE 
